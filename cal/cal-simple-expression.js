@@ -1,5 +1,6 @@
 'use strict';
 const BinaryTree = require('../BinaryTree');
+let map;
 
 function getFisrtOperatorIndexNotInBracket(operator, str) {
     const cs = [];
@@ -34,15 +35,97 @@ function removeOneOperator(tree, node) {
     removeOneOperator(tree, node.right);
 }
 
+function cal(n1, o, n2) {
+    switch (o) {
+        case '+':
+            return Number(n1) + Number(n2);
+        case '-':
+            return Number(n1) - Number(n2);
+        case '*':
+            return Number(n1) * Number(n2);
+        case '/':
+            return Number(n1) / Number(n2);
+        default:
+            throw new Error(`不支持的操作符:${o}`);
+    }
+}
+
+function calculateExpression(tree) {
+    const stack = [];
+    const operators = ['+', '-', '*', '/'];
+    for(let e of tree.rightOrderEnumerate(tree.root)) {
+        if(operators.includes(e)) {
+            const n2 = stack.pop();
+            const n1 = stack.pop();
+            stack.push(cal(typeof n1 == 'number' ? n1: map[n1], e, typeof n2 == 'number' ? n2: map[n2]))
+        } else {
+            stack.push(e);
+        }
+    }
+    return Number(stack.pop());
+}
+
+function getRandomName(length) {
+    let name = '';
+    while(length--) {
+        name += String.fromCodePoint(97 + Math.ceil(Math.random() * 25));
+    }
+    return name;
+}
+
+function splitNumber(e) {
+    let s = [];
+    let stack = [];
+    const map = {};
+    const operators = ['+', '-', '*', '/'];
+
+    for(let c of e) {
+        if(c.match(/\d/) || ( c == '-' && stack.length === 0 )) {
+            stack.push(c);
+            continue;
+        }
+
+        if(!operators.includes(c) && c !== ')') {
+            s.push(c);
+            continue;
+        }
+
+        if(stack.length === 0) {
+            s.push(c);
+            continue;
+        }
+
+        const name = getRandomName(4);
+        s.push(name);
+        s.push(c);
+        map[name] = Number(stack.join(''));
+        stack = [];
+    }
+
+    if(stack.length > 0) {
+        const name = getRandomName(4);
+        s.push(name);
+        map[name] = Number(stack.join(''));
+        stack = [];
+    }
+    return {
+        s,
+        map
+    };
+}
+
 function calSimpleExpression(e) {
+    const ret = splitNumber(e);
+    map = ret.map;
+    e = ret.s.join('');
+    console.log(e);
+    console.log(map)
     const tree = new BinaryTree();
     tree.insertToNode(null, null, e);
     removeOneOperator(tree, tree.root);
-    console.log(tree.leftOrderEnumerate(tree.root));
-    console.log(tree.middleOrderEnumerate(tree.root));
-    console.log(tree.rightOrderEnumerate(tree.root));
+    console.log(tree.rightOrderEnumerate(tree.root))
+    console.log(calculateExpression(tree))
 }
 
-calSimpleExpression('2*(6-4)+5');
-
+calSimpleExpression('-2*(-6-4)+5');
 module.exports = calSimpleExpression;
