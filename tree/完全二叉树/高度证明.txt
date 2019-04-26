@@ -1,0 +1,26 @@
+节点数: n
+高度: h
+
+因为满二叉树的节点数为 2^0 + ... + 2^h = 2^(h+1) - 1
+因为二叉完全树，除最后一层之外，都是满节点
+
+所以 2^h -1 < n <= 2^(h+1) - 1   等于的情况发生在，完全二叉树正好又是一颗满二叉树
+所以 2^h < n+1 <= 2^(h+1)
+所以 h < lg(n+1) <= h+1
+
+因为lg(n+1)落在了(h,h+1]区间
+所以 h 为离最近 lg(n+1) 的最大整数
+所以问题变为求证 Math.floor(lgn) 为为离最近 lg(n+1) 的最大整数
+
+反证
+假设存在m使得，Math.floor(lgm) > Math.floor(lgn) 且 Math.floor(lgm) < lg(n+1)
+因为 Math.floor(lgm) > Math.floor(lgn)
+所以 m > n
+  再次利用反证 m >= n+1，
+
+假设n+1 = 2^k，则lg(n+1) = k
+因为m >= n+1
+所以lgm >= k，所以Math.floor(lgm) >= k 与 Math.floor(lgm) < k 矛盾
+
+所以不存在整数m，使得假设成立，所以Math.floor(lgn) 为为离最近 lg(n+1) 的最大整数
+

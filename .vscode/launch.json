@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "启动程序",
-            "program": "${workspaceFolder}/cal/cal-simple-expression"
+            "program": "${workspaceFolder}/sort/counting_sort.js"
         }
     ]
 }
